@@ -1,59 +1,55 @@
-$("#currentDay").text(moment().format('dddd') + ", " + moment().format('MMMM Do'));
-var calendarData = [
-    { time: "9AM", records: "" },
-    { time: "10AM", records: "" },
-    { time: "11AM", records: "" },
-    { time: "12PM", records: "" },
-    { time: "1PM", records: "" },
-    { time: "2PM", records: "" },
-    { time: "3PM", records: "" },
-    { time: "4PM", records: "" },
-    { time: "5PM", records: "" }
-]
 
-for (i = 0; i < 9; i++) {
-    let inputGroup = $('<div class= "input-group row"></div>');
-    let inputGroupPrepend = $('<div></div>');
-    let inputGroupText = $("<span></span>");
-    let textArea = $("<textarea></textarea>");
-    let saveBtn = $("<input></input>");
+function initializeCalendar() {
+    var calendarData;
 
-    inputGroupPrepend.attr("class", "input-group-prepend");
-    inputGroupText.attr("class", "input-group-text hour");
-    inputGroupText.text(calendarData[i].time);
+    if (JSON.parse(localStorage.getItem("calendarData")) === null) {
+        console.log("here")
+        calendarData = [
+            { time: "9AM", records: "" },
+            { time: "10AM", records: "" },
+            { time: "11AM", records: "" },
+            { time: "12PM", records: "" },
+            { time: "1PM", records: "" },
+            { time: "2PM", records: "" },
+            { time: "3PM", records: "" },
+            { time: "4PM", records: "" },
+            { time: "5PM", records: "" },
+        ]
+        localStorage.setItem("calendarData", JSON.stringify(calendarData));
+    } else {
+        calendarData = JSON.parse(localStorage.getItem("calendarData"));
+        console.log("there")
+    }
 
-    textArea.attr("class", "form-control inputTextArea " + calendarData[i].time);
-    textArea.attr("aria-label", "With textarea");
+    for (i = 0; i < 9; i++) {
+        let inputGroup = $('<div class= "input-group row"></div>');
+        let inputGroupPrepend = $('<div></div>');
+        let inputGroupText = $("<span></span>");
+        let textArea = $("<textarea></textarea>");
+        let saveBtn = $("<input></input>");
 
-    saveBtn.attr("class", "btn btn-primary saveBtn");
-    saveBtn.attr("type", "reset");
-    saveBtn.attr("value", "save");
+        inputGroupPrepend.attr("class", "input-group-prepend");
+        inputGroupText.attr("class", "input-group-text hour");
+        inputGroupText.text(calendarData[i].time);
 
-    saveBtn.attr("dataTime", calendarData[i].time);
-    // console.log(saveBtn.attr("dataTime"))
+        textArea.attr("class", "form-control inputTextArea " + calendarData[i].time);
+        textArea.attr("aria-label", "With textarea");
+        textArea.text(calendarData[i].records);
 
-    $(".container").append(inputGroup);
-    inputGroup.append(inputGroupPrepend);
-    inputGroupPrepend.append(inputGroupText);
-    inputGroup.append(textArea);
-    inputGroup.append(saveBtn);
+        saveBtn.attr("class", "btn btn-primary saveBtn");
+        saveBtn.attr("type", "reset");
+        saveBtn.attr("value", "save");
+
+        saveBtn.attr("dataTime", calendarData[i].time);
+        // console.log(saveBtn.attr("dataTime"))
+
+        $(".container").append(inputGroup);
+        inputGroup.append(inputGroupPrepend);
+        inputGroupPrepend.append(inputGroupText);
+        inputGroup.append(textArea);
+        inputGroup.append(saveBtn);
+    }
 }
-
-$(".btn").on("click", function (e) {
-    e.preventDefault();
-    // var test = $($(".inputTextArea")[0]).attr("class");
-    // var hour = moment().format('hA');
-    // console.log(hour.length);
-    // console.log(test.split(" ")[2]);
-    // console.log(this);
-    //Get the time
-    console.log($(this).siblings(".input-group-prepend").children(".hour").text());
-    //Get the text entered
-    console.log($(this).siblings("textarea").val());
-    // console.log(moment().format('hA'));
-    // console.log(moment(hour, 'hA').isSame('10PM', 'hA'));
-    //console.log($($(".inputTextArea")[0]).attr("class")).split("")[2];
-})
 
 function numHour(hour) {
     let num;
@@ -69,13 +65,6 @@ function numHour(hour) {
 
     return num;
 }
-
-
-// function isBeforeHours(currentHour, calendarHour) {
-//     let currentHourNum = numHour(currentHour);
-//     let calendarHourNum = numHour(calendarHour);
-//     return currentHourNum < calendarHourNum;
-// }
 
 function isAfterHours(currentHour, calendarHour) {
     let currentHourNum = numHour(currentHour);
@@ -94,11 +83,8 @@ function updateTime() {
     let currentHour = moment().format('h A');
     let inputTextArea = $(".inputTextArea");
     let calendarHourStr = $(".hour");
-    // console.log($(calendarHourStr[0]).text())
     for (i = 0; i < inputTextArea.length; i++) {
         let calendarHour = $(calendarHourStr[i]).text();
-        // console.log(currentHour);
-        // console.log(calendarHour);
         if (isSameHours(currentHour, calendarHour)) {
             $(inputTextArea[i]).attr("class", "form-control inputTextArea " + " present");
         } else if (isAfterHours(currentHour, calendarHour)) {
@@ -109,11 +95,29 @@ function updateTime() {
     }
 
 }
+
+$("#currentDay").text(moment().format('dddd') + ", " + moment().format('MMMM Do'));
+initializeCalendar();
 updateTime();
 setInterval(updateTime, 1000); // 1000 miliseconds
 
-// function saveInput(thisOne) {
-//     // e.preventDefault();
-//     console.log(thisOne);
-//     console.log($(thisOne).siblings("textarea").val());
-// }
+$(".btn").on("click", function (e) {
+    e.preventDefault();
+    var entryTime = $(this).siblings(".input-group-prepend").children(".hour").text();
+    var entryText = $(this).siblings("textarea").val();
+    var calendarData = JSON.parse(localStorage.getItem("calendarData"));
+    console.log(calendarData);
+    console.log(entryText);
+    console.log(entryTime);
+
+    for (i = 0; i < calendarData.length; i++) {
+        console.log(entryTime);
+        console.log(calendarData[i].time);
+        console.log(entryTime === calendarData[i].time);
+        if (entryTime === calendarData[i].time) {
+            calendarData[i].records = entryText;
+        }
+        localStorage.setItem("calendarData", JSON.stringify(calendarData));
+    }
+
+})
