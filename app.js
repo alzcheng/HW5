@@ -2,8 +2,10 @@
 function initializeCalendar() {
     var calendarData;
 
+    //Set today's date on the top of the calendar
     $("#currentDay").text(moment().format('dddd') + ", " + moment().format('MMMM Do'));
 
+    //Initialize the data that is stored in local storage and set calendarData to it.  If there is no data, create initial data. 
     if (JSON.parse(localStorage.getItem("calendarData")) === null) {
         console.log("here")
         calendarData = [
@@ -23,6 +25,7 @@ function initializeCalendar() {
         console.log("there")
     }
 
+    //Loop through the DOM to construct the calendar
     for (i = 0; i < 9; i++) {
         let inputGroup = $('<div class= "input-group row"></div>');
         let inputGroupPrepend = $('<div></div>');
@@ -40,10 +43,9 @@ function initializeCalendar() {
 
         saveBtn.attr("class", "btn btn-primary saveBtn");
         saveBtn.attr("type", "reset");
-        saveBtn.attr("value", "save");
+        saveBtn.attr("value", "Save");
 
         saveBtn.attr("dataTime", calendarData[i].time);
-        // console.log(saveBtn.attr("dataTime"))
 
         $(".container").append(inputGroup);
         inputGroup.append(inputGroupPrepend);
@@ -53,6 +55,7 @@ function initializeCalendar() {
     }
 }
 
+//Converts the format HHA (ex. 12PM) into a numerical number for comparison
 function numHour(hour) {
     let num;
     if (hour.length === 3) {
@@ -68,19 +71,23 @@ function numHour(hour) {
     return num;
 }
 
+//Takes in currentHour and calendarHour in the format HHA (ex. 12PM) 
+//and return true if currentHourNum > calendarHourNum
 function isAfterHours(currentHour, calendarHour) {
     let currentHourNum = numHour(currentHour);
     let calendarHourNum = numHour(calendarHour);
     return currentHourNum > calendarHourNum;
 }
 
+//Takes in currentHour and calendarHour in the format HHA (ex. 12PM) 
+//and return true if currentHourNum = calendarHourNum
 function isSameHours(currentHour, calendarHour) {
     let currentHourNum = numHour(currentHour);
     let calendarHourNum = numHour(calendarHour);
     return currentHourNum === calendarHourNum;
 }
 
-
+//Sets the color such that each section color reflects whether it is present, past or future
 function updateTime() {
     let currentHour = moment().format('h A');
     let inputTextArea = $(".inputTextArea");
@@ -98,24 +105,18 @@ function updateTime() {
 
 }
 
-
 initializeCalendar();
 updateTime();
-setInterval(updateTime, 1000); // 1000 miliseconds
+setInterval(updateTime, 1000); // Check the color of each section every 1000 millisecond
 
+//If any time the save button is clicked, save the information into Local Storage
 $(".btn").on("click", function (e) {
     e.preventDefault();
     var entryTime = $(this).siblings(".input-group-prepend").children(".hour").text();
     var entryText = $(this).siblings("textarea").val();
     var calendarData = JSON.parse(localStorage.getItem("calendarData"));
-    console.log(calendarData);
-    console.log(entryText);
-    console.log(entryTime);
 
     for (i = 0; i < calendarData.length; i++) {
-        console.log(entryTime);
-        console.log(calendarData[i].time);
-        console.log(entryTime === calendarData[i].time);
         if (entryTime === calendarData[i].time) {
             calendarData[i].records = entryText;
         }
