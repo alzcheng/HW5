@@ -2,6 +2,8 @@
 function initializeCalendar() {
     var calendarData;
 
+    $("#currentDay").text(moment().format('dddd') + ", " + moment().format('MMMM Do'));
+
     if (JSON.parse(localStorage.getItem("calendarData")) === null) {
         console.log("here")
         calendarData = [
@@ -96,7 +98,7 @@ function updateTime() {
 
 }
 
-$("#currentDay").text(moment().format('dddd') + ", " + moment().format('MMMM Do'));
+
 initializeCalendar();
 updateTime();
 setInterval(updateTime, 1000); // 1000 miliseconds
