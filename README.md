@@ -23,4 +23,4 @@ This application will have the following features:
 2. Can dynamically change classes in an element.
 
 ## Link to finished product website
-[Link to finished product](https://alzcheng.github.io/HW5/)
+[Link to finished product](https://alzcheng.github.io/workdayScheduler/)
